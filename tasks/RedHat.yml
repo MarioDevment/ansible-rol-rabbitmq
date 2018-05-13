@@ -1,0 +1,59 @@
+---
+#- name: Add Repo Erlang
+#  copy:
+#    src: ./files/erlang-solutions-1.0-1.noarch.rpm
+#    dest: /tmp/
+
+#- name: Install Erlang.
+#  yum:
+#    name: /tmp/erlang-solutions-1.0-1.noarch.rpm
+#    state: present
+
+#- name: Install Erlang
+#  yum:
+#    name: erlang
+#    state: present
+
+- name: Install Erlang.
+  yum:
+    name: https://github.com/rabbitmq/erlang-rpm/releases/download/v20.1.7.1/erlang-20.1.7.1-1.el7.centos.x86_64.rpm
+    state: present
+
+- name: Add Repo RabbitMQ
+  copy:
+    src: ./files/rabbitmq-server-3.7.5-1.el7.noarch.rpm
+    dest: /tmp/
+
+- name: Install pluging lock for Erlang
+  yum:
+    name: yum-plugin-versionlock
+    state: present
+
+- name: Import Public Key RabbitMQ
+  command: "rpm --import https://www.rabbitmq.com/rabbitmq-release-signing-key.asc"
+
+- name: Install RabitMQ.
+  yum:
+    name: /tmp/rabbitmq-server-3.7.5-1.el7.noarch.rpm
+    state: present
+
+- name: Config RabbitMQ
+  command: "chkconfig rabbitmq-server on"
+
+- name: Start service RabbitMQ, if not running
+  service:
+    name: rabbitmq-server
+    state: started
+
+- name: Config RabbitMQ
+  command: "rabbitmq-plugins enable rabbitmq_management"
+
+- name: Config RabbitMQ
+  command: "rabbitmqctl add_user admin admin"
+  ignore_errors: yes
+- name: Config RabbitMQ
+  command: "rabbitmqctl set_user_tags admin administrator"
+  ignore_errors: yes
+- name: Config RabbitMQ
+  command: "rabbitmqctl set_permissions -p / admin \".*\" \".*\" \".*\""
+  ignore_errors: yes
