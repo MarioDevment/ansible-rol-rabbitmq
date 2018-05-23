@@ -51,9 +51,23 @@
 - name: Config RabbitMQ
   command: "rabbitmqctl add_user admin admin"
   ignore_errors: yes
+
 - name: Config RabbitMQ
   command: "rabbitmqctl set_user_tags admin administrator"
   ignore_errors: yes
+
 - name: Config RabbitMQ
   command: "rabbitmqctl set_permissions -p / admin \".*\" \".*\" \".*\""
+  ignore_errors: yes
+
+- name: Start Service rabbitMQ
+  command: "service rabbitmq-server start"
+  ignore_errors: yes
+
+- name: Install Plugins
+  command: "rabbitmq-plugins enable rabbitmq_management"
+  ignore_errors: yes
+
+- name: Reset Service
+  command: "service rabbitmq-server restart"
   ignore_errors: yes
